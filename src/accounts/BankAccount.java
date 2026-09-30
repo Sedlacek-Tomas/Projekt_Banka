@@ -1,5 +1,7 @@
 package accounts;
 
+import notifier.ConsoleNotifierService;
+import notifier.NotifierService;
 import person.AccountOwner;
 
 import java.util.UUID;
@@ -14,6 +16,8 @@ public abstract class BankAccount {
 
     private double balance;
 
+    private NotifierService notifierService = new ConsoleNotifierService();
+
     public BankAccount(AccountOwner accountOwner, String accountNumber) {
         this.uuid = UUID.randomUUID().toString();
         this.accountOwner = accountOwner;
@@ -27,28 +31,12 @@ public abstract class BankAccount {
         this.balance = balance;
     }
 
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
     public double getBalance() {
         return balance;
-    }
-
-    public void add(double amount){
-
-        double newBalance = balance+amount;
-        if(amount < 0){
-            throw new IllegalArgumentException("Amount cannot be negative");
-        }
-
-        this.balance += amount;
-    }
-
-    public void sub(double amount) {
-        double newBalance = balance - amount;
-
-        if(amount < 0){
-            throw new IllegalArgumentException("Amount cannot be negative");
-        }
-
-        this.balance -= amount;
     }
 
 }
