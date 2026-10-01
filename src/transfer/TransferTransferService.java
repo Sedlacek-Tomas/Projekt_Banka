@@ -26,21 +26,15 @@ public class TransferTransferService {
                 double transferFee = newBalanceSourceAccount*BUSINESS_ACCOUNT_SERVICE_FEE;
                 newBalanceTargetAccount-=transferFee;
             }
-
-        if(newBalanceSourceAccount < GetWithDrawLimit(sourceAccount))
+        GetWithdrawLimitService getWithdrawLimitService = new GetWithdrawLimitService();
+        if(newBalanceSourceAccount < getWithdrawLimitService.getLimit(sourceAccount))
         {
-            throw new IllegalArgumentException("Cannot transfer negative amount");
+            throw new IllegalArgumentException("Source account exceeds it's limit.");
         }
 
         sourceAccount.setBalance(newBalanceSourceAccount);
         targetAccount.setBalance(newBalanceTargetAccount);
 
     }
-    private int GetWithDrawLimit(BankAccount account)
-    {
-        if (account instanceof StudentAccount) {
-            return -5000;
-        }
-        return 0;
-    }
+
 }

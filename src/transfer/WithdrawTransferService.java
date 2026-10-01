@@ -17,18 +17,13 @@ public class WithdrawTransferService {
             newBalance -= serviceFee;
         }
 
-        if(newBalance < GetWithDrawLimit(account))
+        GetWithdrawLimitService getWithdrawLimitService = new GetWithdrawLimitService();
+        if(newBalance < getWithdrawLimitService.getLimit(account))
         {
             throw new IllegalArgumentException("Cannot subtract negative amount");
         }
 
         account.setBalance(newBalance);
     }
-    private int GetWithDrawLimit(BankAccount account)
-    {
-        if (account instanceof StudentAccount) {
-            return -5000;
-        }
-        return 0;
-    }
+
 }

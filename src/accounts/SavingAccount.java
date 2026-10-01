@@ -3,14 +3,14 @@ package accounts;
 import person.AccountOwner;
 
 public class SavingAccount extends BankAccount implements InterestPoint {
-    public SavingAccount(AccountOwner accountOwner, String accountNumber) {
-        super(accountOwner, accountNumber);
+    public SavingAccount(String uuid, AccountOwner accountOwner, String accountNumber) {
+        super(uuid, accountOwner, accountNumber);
     }
 
     private static final float INTEREST_RATE = 0.05f;
 
-    public SavingAccount(AccountOwner accountOwner, String accountNumber, double balance) {
-        super(accountOwner, accountNumber, balance);
+    public SavingAccount(String uuid, AccountOwner accountOwner, String accountNumber, double balance) {
+        super(uuid, accountOwner, accountNumber, balance);
     }
 
 

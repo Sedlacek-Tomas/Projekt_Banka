@@ -1,6 +1,7 @@
 import accounts.*;
 import notifier.ConsoleNotifierService;
 import person.AccountOwner;
+import person.AccountOwnerFactory;
 import transfer.DepositTransferService;
 import transfer.TransferTransferService;
 import transfer.WithdrawTransferService;
@@ -12,14 +13,21 @@ import transfer.WithdrawTransferService;
 void main() {
     //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
     // to see how IntelliJ IDEA suggests fixing it.
-    AccountOwner accountOwner = new AccountOwner("Tomas", "Sedlacek");
+    AccountOwnerFactory accountOwnerFactory = new AccountOwnerFactory();
+
+    AccountOwner accountOwner = accountOwnerFactory.createAccountOwner("Tomas", "Sedlacek");
 
     accountOwner.setLastName("Pokorny");
 
-    BankAccount bankAccount = new CurrentAccount(accountOwner, "123", 500);
-    BankAccount studentAccount = new StudentAccount(accountOwner, "124", 500, "DELTA");
-    BankAccount savingAccount = new SavingAccount(accountOwner, "125", 500);
-    BankAccount businessAccount = new BusinessAccount(accountOwner, "126", 500);
+    BusinessAccountFactory businessAccountFactory = new BusinessAccountFactory();
+    CurrentAccountFactory currentAccountFactory = new CurrentAccountFactory();
+    SavingAccountFactory savingAccountFactory = new SavingAccountFactory();
+    StudentAccountFactory studentAccountFactory = new StudentAccountFactory();
+
+    BankAccount bankAccount = currentAccountFactory.createCurrentAccount(accountOwner, 500);
+    BankAccount studentAccount = studentAccountFactory.createStudentAccount(accountOwner, "DELTA", 500);
+    BankAccount savingAccount = savingAccountFactory.createSavingAccount(accountOwner, 500);
+    BankAccount businessAccount = businessAccountFactory.createBusinessAccount(accountOwner, 500);
 
     List<BankAccount> bankAccounts = new ArrayList<>();
     bankAccounts.add(bankAccount);
