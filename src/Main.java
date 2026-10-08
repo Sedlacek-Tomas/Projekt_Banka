@@ -1,7 +1,9 @@
 import accounts.*;
 import notifier.ConsoleNotifierService;
+import notifier.NotifierService;
 import person.AccountOwner;
 import person.AccountOwnerFactory;
+import transfer.TransferLoggerService;
 import transfer.DepositTransferService;
 import transfer.TransferTransferService;
 import transfer.WithdrawTransferService;
@@ -49,7 +51,11 @@ void main() {
     }
 
     ConsoleNotifierService NotifierService = new ConsoleNotifierService();
-    TransferTransferService TransferService = new TransferTransferService();
+    TransferLoggerService transferLoggerService = new TransferLoggerService();
+
+    DepositTransferService depositTransferService = new DepositTransferService(transferLoggerService);
+    WithdrawTransferService withdrawTransferService = new WithdrawTransferService(transferLoggerService);
+    TransferTransferService transferTransferService = new TransferTransferService(transferLoggerService);
 
     NotifierService.notify("Simulace převodů.");
 
@@ -59,7 +65,7 @@ void main() {
     NotifierService.notify("businessAccount.");
     printBalance(businessAccount);
 
-    TransferService.transfer(studentAccount, businessAccount, 500);
+    transferTransferService.transfer(studentAccount, businessAccount, 500);
 
     NotifierService.notify("Stav účtů po převodech.");
 
@@ -68,7 +74,7 @@ void main() {
     NotifierService.notify("businessAccount.");
     printBalance(businessAccount);
 
-    TransferService.transfer(businessAccount, studentAccount, 500);
+    transferTransferService.transfer(businessAccount, studentAccount, 500);
 
     NotifierService.notify("Stav účtů po převodech.");
 
@@ -76,6 +82,13 @@ void main() {
     printBalance(studentAccount);
     NotifierService.notify("businessAccount.");
     printBalance(businessAccount);
+
+    NotifierService.notify("Vložení a vybrání z účtů.");
+    withdrawTransferService.withdraw(businessAccount, 100);
+    depositTransferService.deposit(studentAccount, 167);
+
+    NotifierService.notify("Výpis historie");
+    transferLoggerService.printAllTransactions();
 
 }
 

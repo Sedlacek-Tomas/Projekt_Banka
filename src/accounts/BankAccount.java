@@ -31,6 +31,10 @@ public abstract class BankAccount {
         this.balance = balance;
     }
 
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
     public void setBalance(double balance) {
         this.balance = balance;
     }
