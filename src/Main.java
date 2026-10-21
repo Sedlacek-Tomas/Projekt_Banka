@@ -1,4 +1,5 @@
 import accounts.*;
+import accounts.serialization.*;
 import notifier.ConsoleNotifierService;
 import notifier.NotifierService;
 import person.AccountOwner;
@@ -89,6 +90,22 @@ void main() {
 
     NotifierService.notify("Výpis historie");
     transferLoggerService.printAllTransactions();
+
+    NotifierService.notify("XmlSerializace");
+    BankAccountSerializer bankAccountJacksonSerializer = new BankAccountJacksonSerializer();
+    String bankAccountXml = bankAccountJacksonSerializer.serialize(bankAccount);
+    String bankAccountXmlAll = bankAccountJacksonSerializer.serializeAll(bankAccounts);
+
+    IO.println(bankAccountXml);
+    IO.println(bankAccountXmlAll);
+
+    NotifierService.notify("JSONSerializace");
+    BankAccountSerializer bankAccountJSONSerializer = new BankAccountGsonSerializer();
+    String bankAccountJSON = bankAccountJSONSerializer.serialize(bankAccount);
+    String bankAccountJSONlAll = bankAccountJSONSerializer.serializeAll(bankAccounts);
+
+    IO.println(bankAccountJSON);
+    IO.println(bankAccountJSONlAll);
 
 }
 

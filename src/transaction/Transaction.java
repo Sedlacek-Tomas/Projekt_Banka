@@ -58,13 +58,12 @@ public class Transaction {
 
     @Override
     public String toString() {
-        return "Transaction{" +
+        return type + "{" +
                 "uuid='" + uuid + '\'' +
                 ", timestamp=" + timestamp +
                 ", sourceAccountNumber='" + sourceAccountNumber + '\'' +
                 ", targetAccountNumber='" + targetAccountNumber + '\'' +
                 ", amount=" + amount +
-                ", type=" + type +
                 ", status=" + status +
                 '}';
     }
