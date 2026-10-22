@@ -1,7 +1,10 @@
 import accounts.*;
 import accounts.serialization.*;
+import accountsServices.BankAccountService;
+import accountsServices.IBankAccountService;
+import accountsServices.decorators.BankAccountWithLoggerService;
+import accountsServices.decorators.BankAccountWithLoggerWithTimeService;
 import notifier.ConsoleNotifierService;
-import notifier.NotifierService;
 import person.AccountOwner;
 import person.AccountOwnerFactory;
 import transfer.TransferLoggerService;
@@ -22,34 +25,10 @@ void main() {
 
     accountOwner.setLastName("Pokorny");
 
-    BusinessAccountFactory businessAccountFactory = new BusinessAccountFactory();
-    CurrentAccountFactory currentAccountFactory = new CurrentAccountFactory();
-    SavingAccountFactory savingAccountFactory = new SavingAccountFactory();
-    StudentAccountFactory studentAccountFactory = new StudentAccountFactory();
-
-    BankAccount bankAccount = currentAccountFactory.createCurrentAccount(accountOwner, 500);
-    BankAccount studentAccount = studentAccountFactory.createStudentAccount(accountOwner, "DELTA", 500);
-    BankAccount savingAccount = savingAccountFactory.createSavingAccount(accountOwner, 500);
-    BankAccount businessAccount = businessAccountFactory.createBusinessAccount(accountOwner, 500);
-
-    List<BankAccount> bankAccounts = new ArrayList<>();
-    bankAccounts.add(bankAccount);
-    bankAccounts.add(studentAccount);
-    bankAccounts.add(savingAccount);
-    bankAccounts.add(businessAccount);
-
-    for (BankAccount account: bankAccounts){
-        if(account instanceof InterestPoint) {
-            ((InterestPoint)account).calculateInterest();
-        }
-    }
-
-    for (BankAccount account: bankAccounts){
-        if(account instanceof  StudentAccount) {
-            StudentAccount stdAccount = (StudentAccount) account;
-            IO.println("school: " + stdAccount.getSchoolName());
-        }
-    }
+    IBankAccountService bankAccountService = new BankAccountService();
+    IBankAccountService bankAccountWithLoggerService = new BankAccountWithLoggerService(bankAccountService);
+    IBankAccountService bankAccountWithLoggerWithTimeService = new BankAccountWithLoggerWithTimeService(bankAccountService);
+    IBankAccountService bankAccountWithLoggerAndTimeLoggerService = new BankAccountWithLoggerService(bankAccountWithLoggerWithTimeService);
 
     ConsoleNotifierService NotifierService = new ConsoleNotifierService();
     TransferLoggerService transferLoggerService = new TransferLoggerService();
@@ -57,6 +36,33 @@ void main() {
     DepositTransferService depositTransferService = new DepositTransferService(transferLoggerService);
     WithdrawTransferService withdrawTransferService = new WithdrawTransferService(transferLoggerService);
     TransferTransferService transferTransferService = new TransferTransferService(transferLoggerService);
+
+    NotifierService.notify("ORIGINAL");
+    BankAccount bankAccount = bankAccountService.createCurrentBankAccount(accountOwner, 500);
+    NotifierService.notify("======");
+    NotifierService.notify("LOGGER");
+    BankAccount studentAccount = bankAccountWithLoggerService.createStudentBankAccount(accountOwner, "DELTA", 500);
+    NotifierService.notify("======");
+    NotifierService.notify("TIME");
+    BankAccount savingAccount = bankAccountWithLoggerWithTimeService.createSavingBankAccount(accountOwner, 500);
+    NotifierService.notify("======");
+    NotifierService.notify("ALL");
+    BankAccount businessAccount = bankAccountWithLoggerAndTimeLoggerService.createBusinessBankAccount(accountOwner, 500);
+    NotifierService.notify("======");
+
+
+    for (BankAccount account: bankAccountService.getBankAccounts()){
+        if(account instanceof InterestPoint) {
+            ((InterestPoint)account).calculateInterest();
+        }
+    }
+
+    for (BankAccount account: bankAccountService.getBankAccounts()){
+        if(account instanceof  StudentAccount) {
+            StudentAccount stdAccount = (StudentAccount) account;
+            IO.println("school: " + stdAccount.getSchoolName());
+        }
+    }
 
     NotifierService.notify("Simulace převodů.");
 
@@ -94,7 +100,7 @@ void main() {
     NotifierService.notify("XmlSerializace");
     BankAccountSerializer bankAccountJacksonSerializer = new BankAccountJacksonSerializer();
     String bankAccountXml = bankAccountJacksonSerializer.serialize(bankAccount);
-    String bankAccountXmlAll = bankAccountJacksonSerializer.serializeAll(bankAccounts);
+    String bankAccountXmlAll = bankAccountJacksonSerializer.serializeAll(bankAccountService.getBankAccounts());
 
     IO.println(bankAccountXml);
     IO.println(bankAccountXmlAll);
@@ -102,7 +108,7 @@ void main() {
     NotifierService.notify("JSONSerializace");
     BankAccountSerializer bankAccountJSONSerializer = new BankAccountGsonSerializer();
     String bankAccountJSON = bankAccountJSONSerializer.serialize(bankAccount);
-    String bankAccountJSONlAll = bankAccountJSONSerializer.serializeAll(bankAccounts);
+    String bankAccountJSONlAll = bankAccountJSONSerializer.serializeAll(bankAccountService.getBankAccounts());
 
     IO.println(bankAccountJSON);
     IO.println(bankAccountJSONlAll);
